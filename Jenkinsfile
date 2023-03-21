@@ -1,21 +1,28 @@
 pipeline {
     agent any
-    
     stages {
         stage('build') {
             steps {
-                sh 'echo Build'
+                sh 'echo "******Building a docker image*****"'
+                sh 'docker --version'
+                sh 'sudo docker build -t dockerimage ./'
             }
         }
-        stage('test') {
-            steps {
-                sh 'echo Test'
+        stage('run'){
+            steps{
+                sh 'echo "Run Stage"'
+                sh 'sudo docker images'
+                sh 'sudo docker run -itd --name dockercontainer dockerimage'
             }
         }
-        stage('deploy') {
-            steps {
-                sh 'echo Deploy'
+        stage("remove"){
+
+            steps{
+                sh 'echo "removing container"'
+                sh 'sudo docker rm -f dockercontainer'
+                sh 'sudo docker system prune -af'
             }
         }
+        
     }
 }
